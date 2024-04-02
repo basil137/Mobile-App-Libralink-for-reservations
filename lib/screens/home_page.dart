@@ -20,12 +20,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
   String? userName;
   String? userId;
 
-  List<QueryDocumentSnapshot> usersAll = [];
+  // List<QueryDocumentSnapshot> usersAll = [];
   void getdataAll() async {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('users').where("userEmail",isEqualTo: FirebaseAuth.instance.currentUser!.email.toString()).get();
-    usersAll.addAll(querySnapshot.docs);
-    SetPref.setpref(usersAll[0].get("userName"), querySnapshot.docs[0].get("userId"));
+    // usersAll.addAll(querySnapshot.docs);
+    print("===================================number=${querySnapshot.docs.length}");
+
+    SetPref.setpref(querySnapshot.docs[0].get("userName"), querySnapshot.docs[0].get("userId"));
     getpref();
     // getUserName();
     setState(() {});

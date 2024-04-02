@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project2/util/screens.dart';
 
 class EditInfoScreen extends StatefulWidget {
   const EditInfoScreen({
@@ -75,10 +77,34 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
             ),
             InkWell(
               onTap: () async {
-                if (keyform.currentState!.validate()) {
-                  await users
-                      .doc()
-                      .update({"userName": customController.text});
+                QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                    .collection('users')
+                    .where("userEmail",
+                        isEqualTo:
+                            FirebaseAuth.instance.currentUser!.email.toString())
+                    .get();
+
+                if (widget.lableText == "Name") {
+                  if (keyform.currentState!.validate()) {
+                    await users
+                        .doc(querySnapshot.docs[0].id)
+                        .update({"userName": customController.text});
+
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, Screens.homePageScreen, (route) => false);
+                  }
+                }
+                else if(widget.lableText == "Id Number")
+                {
+                  if (keyform.currentState!.validate()) {
+                    await users
+                        .doc(querySnapshot.docs[0].id)
+                        .update({"userId": customController.text});
+
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, Screens.homePageScreen, (route) => false);
+                  }
+
                 }
               },
               child: Container(
