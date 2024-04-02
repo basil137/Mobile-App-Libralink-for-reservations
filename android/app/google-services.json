@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "740579927701",
+    "project_id": "progect2-762f1",
+    "storage_bucket": "progect2-762f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740579927701:android:103466679258fc2bb2dd9c",
+        "android_client_info": {
+          "package_name": "com.libralink.project2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3Cn11PEhhOL0_ITGS7jKNNtLdlhjYctw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:project2/screens/login_screen.dart';
 import 'package:project2/screens/home_page.dart';
 import 'package:project2/screens/reg_screen.dart';
+import 'package:project2/screens/reservation_screen.dart';
 import 'package:project2/screens/user_information_screen.dart';
 import 'package:project2/screens/verified_screen.dart';
 import 'package:project2/screens/welcome_screen.dart';
@@ -59,7 +60,7 @@ class _MyAppState extends State<MyApp> {
             backgroundColor: AddColor.backgrounAppBar,
             shadowColor: AddColor.shaddowAppBar,
             elevation: 3,
-            
+            // toolbarHeight: 80,
             centerTitle: true,
           )
           // textTheme: const TextTheme(
@@ -77,6 +78,8 @@ class _MyAppState extends State<MyApp> {
         Screens.homePageScreen: (context) => const HomePageScreen(),
         Screens.verifiedScreen: (context) => const VerifiedScreen(),
         Screens.userInfoScreen: (context) => const UserInfoScreen(),
+        Screens.reservationScreen: (context) => const ReservationScreen(),
+
 
         
       },
