@@ -25,7 +25,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('users').where("userEmail",isEqualTo: FirebaseAuth.instance.currentUser!.email.toString()).get();
     usersAll.addAll(querySnapshot.docs);
-    getUserName();
+    SetPref.setpref(usersAll[0].get("userName"), querySnapshot.docs[0].get("userId"));
+    getpref();
+    // getUserName();
     setState(() {});
   }
 
@@ -36,21 +38,21 @@ class _HomePageScreenState extends State<HomePageScreen> {
     setState(() {});
   }
 
-  void getUserName() {
-    print("===================================number=${usersAll.length}");
-    for (int i = 0; i < usersAll.length; i++) {
-      String s = usersAll[i].get("userEmail").toString();
-      print("++++++++++++++++++++++++++++++++++++email from userAll=$s\n\n");
-      String ss = FirebaseAuth.instance.currentUser!.email!;
-      print("+++++++++++++++++++++++++++++++++email from firebaseAuth=$ss\n\n");
-      if (usersAll[i].get("userEmail").toString() ==
-          FirebaseAuth.instance.currentUser!.email!) {
-        SetPref.setpref(usersAll[i].get("userName"), usersAll[i].get("userId"));
-        getpref();
-        break;
-      }
-    }
-  }
+  // void getUserName() {
+  //   print("===================================number=${usersAll.length}");
+  //   for (int i = 0; i < usersAll.length; i++) {
+  //     String s = usersAll[i].get("userEmail").toString();
+  //     print("++++++++++++++++++++++++++++++++++++email from userAll=$s\n\n");
+  //     String ss = FirebaseAuth.instance.currentUser!.email!;
+  //     print("+++++++++++++++++++++++++++++++++email from firebaseAuth=$ss\n\n");
+  //     if (usersAll[i].get("userEmail").toString() ==
+  //         FirebaseAuth.instance.currentUser!.email!) {
+  //       SetPref.setpref(usersAll[i].get("userName"), usersAll[i].get("userId"));
+  //       getpref();
+  //       break;
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
