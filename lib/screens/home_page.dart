@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project2/preference/preferences.dart';
+import 'package:project2/screens/reservation_details.dart';
 import 'package:project2/screens/reservation_screen.dart';
 import 'package:project2/screens/user_information_screen.dart';
 import 'package:project2/util/img_fonts_clr.dart';
@@ -16,24 +17,59 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  bool loading = true;
+  bool loadingGetDataAndCheckAllowed = true;
   String? userName;
   String? userId;
+  bool allowedBooking = false;
+  String? uid;
 
-  // List<QueryDocumentSnapshot> usersAll = [];
-  void getdataAll() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('users').where("userEmail",isEqualTo: FirebaseAuth.instance.currentUser!.email.toString()).get();
-    // usersAll.addAll(querySnapshot.docs);
-    print("===================================number=${querySnapshot.docs.length}");
+  void checkAllowed() async {
+    QuerySnapshot querySnapshotReservationTables = await FirebaseFirestore
+        .instance
+        .collection("users")
+        .doc(uid)
+        .collection("reservationTable")
+        .get();
 
-    SetPref.setpref(querySnapshot.docs[0].get("userName"), querySnapshot.docs[0].get("userId"));
-    getpref();
-    // getUserName();
+    if (querySnapshotReservationTables.docs.isEmpty) {
+      allowedBooking = true;
+      setState(() {});
+      print("+++++++++++++++++++++++++++++++++++++++++++ allowed to book");
+      print(
+          "===================================number books=${querySnapshotReservationTables.docs.length}");
+    } else {
+      allowedBooking = false;
+      setState(() {});
+      print(
+          "+++++++++++++++++++++++++++++++++++++++++++ notttttt allowed to book");
+    }
+
+    loadingGetDataAndCheckAllowed = false;
     setState(() {});
   }
 
-   void getpref() async {
+  // List<QueryDocumentSnapshot> usersAll = [];
+  void getdataAll() async {
+    QuerySnapshot querySnapshotUserAccount = await FirebaseFirestore.instance
+        .collection('users')
+        .where("userEmail",
+            isEqualTo: FirebaseAuth.instance.currentUser!.email.toString())
+        .get();
+    // usersAll.addAll(querySnapshot.docs);
+    print(
+        "===================================number users=${querySnapshotUserAccount.docs.length}");
+    uid = querySnapshotUserAccount.docs[0].id;
+    // setState(() {});
+
+    SetPref.setpref(querySnapshotUserAccount.docs[0].get("userName"),
+        querySnapshotUserAccount.docs[0].get("userId"));
+    getpref();
+
+    setState(() {});
+    checkAllowed();
+  }
+
+  void getpref() async {
     SharedPreferences sharedpref = await SharedPreferences.getInstance();
     userName = sharedpref.getString("userName");
     userId = sharedpref.getString("userId");
@@ -59,6 +95,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   void initState() {
     getdataAll();
+    // checkAllowed();
     // Future.delayed(const Duration(seconds: 1));
     super.initState();
   }
@@ -111,87 +148,139 @@ class _HomePageScreenState extends State<HomePageScreen> {
           userName: userName,
         ),
       ),
-      body: ListView(
-        children: [
-          // const Text("welcome"),
-          // MaterialButton(
-          //   color: Colors.red,
-          //   textColor: Colors.white,
-          //   onPressed: () async {
-          //     SharedPreferences sharedpref =
-          //         await SharedPreferences.getInstance();
-          //     sharedpref.setString(
-          //         "name", FirebaseAuth.instance.currentUser!.email!);
-          //   },
-          //   child: const Text("Set name"),
-          // ),
-          // MaterialButton(
-          //   textColor: Colors.white,
-          //   color: Colors.red,
-          //   onPressed: () async {
-          //     SharedPreferences sharedpref =
-          //         await SharedPreferences.getInstance();
-          //     Object? name = sharedpref.get("name");
-          //     print("$name");
-          //   },
-          //   child: const Text("print name"),
-          // ),
-          // ...List.generate(
-          //   usersAll.length,
-          //   (index) => Card(
-          //     child: ListTile(
-          //       title: Text("$userName"),
-          //     ),
-          //   ),
-          // ),
-
-          Container(
-            padding: const EdgeInsets.all(8),
-            width: double.infinity,
-            alignment: Alignment.center,
-            height: MediaQuery.sizeOf(context).height * 0.6,
-            child: Stack(
-              alignment: Alignment.center,
+      body: loadingGetDataAndCheckAllowed
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView(
               children: [
-                Image.asset(AddImage.homePageimg, width: 500),
-                const Text(
-                  "Library Booking\nPlatform",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 37,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                )
+                // const Text("welcome"),
+                // MaterialButton(
+                //   color: Colors.red,
+                //   textColor: Colors.white,
+                //   onPressed: () async {
+                //     SharedPreferences sharedpref =
+                //         await SharedPreferences.getInstance();
+                //     sharedpref.setString(
+                //         "name", FirebaseAuth.instance.currentUser!.email!);
+                //   },
+                //   child: const Text("Set name"),
+                // ),
+                // MaterialButton(
+                //   textColor: Colors.white,
+                //   color: Colors.red,
+                //   onPressed: () async {
+                //     SharedPreferences sharedpref =
+                //         await SharedPreferences.getInstance();
+                //     Object? name = sharedpref.get("name");
+                //     print("$name");
+                //   },
+                //   child: const Text("print name"),
+                // ),
+                // ...List.generate(
+                //   usersAll.length,
+                //   (index) => Card(
+                //     child: ListTile(
+                //       title: Text("$userName"),
+                //     ),
+                //   ),
+                // ),
+
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  height: MediaQuery.sizeOf(context).height * 0.6,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(AddImage.homePageimg, width: 500),
+                      const Text(
+                        "Library Booking\nPlatform",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 37,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: allowedBooking
+                      ? () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ReservationScreen(
+                                  userId: userId,
+                                  userName: userName,
+                                ),
+                              ));
+                        }
+                      : null,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    alignment: Alignment.center,
+                    height: 56,
+                    width: 296,
+                    decoration: BoxDecoration(
+                      color: !allowedBooking ? Colors.grey[300] : null,
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: allowedBooking
+                          ? const LinearGradient(colors: [
+                              Color(0xff9A8877),
+                              Color(0xffC3CFE2),
+                            ])
+                          : null,
+                    ),
+                    child: Text(
+                      'Book Now',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                          color: allowedBooking
+                              ? Colors.black87
+                              : Colors.grey[500]),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                allowedBooking
+                    ? const SizedBox()
+                    : InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ReservationDetailsScreen()));
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 32),
+                          alignment: Alignment.center,
+                          height: 56,
+                          width: 296,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: const LinearGradient(colors: [
+                              Color(0xff9A8877),
+                              Color(0xffC3CFE2),
+                            ]),
+                          ),
+                          child: const Text(
+                            'Reservation Details',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                                color: Colors.black87),
+                          ),
+                        ),
+                      )
               ],
             ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationScreen(userId: userId,userName: userName,),));
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 32),
-              alignment: Alignment.center,
-              height: 56,
-              width: 296,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                gradient: const LinearGradient(colors: [
-                  Color(0xff9A8877),
-                  Color(0xffC3CFE2),
-                ]),
-              ),
-              child: const Text(
-                'Book Now',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    color: Colors.black87),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

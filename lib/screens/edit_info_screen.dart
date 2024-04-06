@@ -99,7 +99,7 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
                           setState(() {});
                           await users
                               .doc(querySnapshot.docs[0].id)
-                              .update({"userName": customController.text});
+                              .update({"userName": customController.text}); 
 
                           Navigator.pushNamedAndRemoveUntil(context,
                               Screens.homePageScreen, (route) => false);
