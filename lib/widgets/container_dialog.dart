@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 
 class ContainerOfDialog extends StatelessWidget {
   const ContainerOfDialog({
-    super.key, required this.text,
+    super.key, required this.text, this.widthContainer,
   });
   final String text;
+  final double? widthContainer;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
       height: 36,
-      width: 50,
+      width:widthContainer==null? 50 :widthContainer,
       decoration: BoxDecoration(
           borderRadius:
               BorderRadius.circular(100),

@@ -1,4 +1,4 @@
-package com.libralink.project2
+package com.libralink.Libralink
 
 import io.flutter.embedding.android.FlutterActivity
 

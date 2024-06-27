@@ -1,4 +1,4 @@
-name: project2
+name: Libralink
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -47,10 +47,19 @@ dependencies:
   awesome_dialog: ^3.2.0
   http: ^1.2.1
   #
+  qr_code_scanner: ^1.0.1
   shared_preferences: ^2.2.2
   
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  android: "launcher_icon_and"
+  ios: "launcher_icon_io"
+  image_path: "assets/png/Logo.png"
+  min_sdk_android: 21
+
   flutter_test:
     sdk: flutter
 

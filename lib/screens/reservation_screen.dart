@@ -1,11 +1,15 @@
+
+
+import 'package:Libralink/preference/preferences.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project2/util/img_fonts_clr.dart';
-import 'package:project2/util/screens.dart';
-import 'package:project2/widgets/container_dialog.dart';
-import 'package:project2/widgets/drawer.dart';
+import 'package:Libralink/util/img_fonts_clr.dart';
+import 'package:Libralink/util/parameters.dart';
+import 'package:Libralink/util/screens.dart';
+import 'package:Libralink/widgets/container_dialog.dart';
+import 'package:Libralink/widgets/drawer.dart';
 
 class ReservationScreen extends StatefulWidget {
   const ReservationScreen({super.key, this.userName, this.userId});
@@ -20,6 +24,14 @@ class _ReservationScreenState extends State<ReservationScreen> {
   String? selectedSize;
   String? selectedFloor;
   String? selectedTimeFrom;
+  String? selectedDayTable;
+
+  int? dateDay;
+  int? dateMonth;
+  int? dateyear;
+
+  int today = ((DateTime.now().weekday + 2) % 7);
+
   String? selectedTimeTo;
   String? selectedIdTable;
   String? uid;
@@ -29,71 +41,198 @@ class _ReservationScreenState extends State<ReservationScreen> {
   bool loadingReserveTable = false;
 
   bool timeValid = true;
+  bool maxTime = true;
 
   List tablesAll = [];
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  editAvailablityTable() async {
-    CollectionReference collectionFloor =
-        FirebaseFirestore.instance.collection('floor $selectedFloor');
-        print(
-        "===================================collectionFloor done");
+  int minuteFormat(String min) {
+    if (min == "5")
+      return 30;
+    else
+      return 0;
+  }
 
-    QuerySnapshot querySnapshotAvailableTableId =
-        await FirebaseFirestore.instance
-            .collection('floor $selectedFloor')
-            .where(
-              "idTable",
-              isEqualTo: selectedIdTable,
-            )
-            .get();
-            print(
-        "===================================number tables match id=${querySnapshotAvailableTableId.docs.length}");
+  dayFormat(String day) {
+    if (day == "0")
+      return "Friday";
+    else if (day == "1")
+      return "Saturday";
+    else if (day == "2")
+      return "Sunday";
+    else if (day == "3")
+      return "Monday";
+    else if (day == "4")
+      return "Tuesday";
+    else if (day == "5")
+      return "Wednesday";
+    else if (day == "6") return "Thursday";
+  }
 
-    if (querySnapshotAvailableTableId.docs.isNotEmpty) {
-      await collectionFloor
-          .doc(querySnapshotAvailableTableId.docs[0].id)
-          .update({"availablity": false});
-    }
+  convertToInt(String day) {
+    if (day == "0")
+      return 0;
+    else if (day == "1")
+      return 1;
+    else if (day == "2")
+      return 2;
+    else if (day == "3")
+      return 3;
+    else if (day == "4")
+      return 4;
+    else if (day == "5")
+      return 5;
+    else if (day == "6") return 6;
+  }
+
+ 
+
+
+  void filterMapField() async {
+    loadingGetTables = true;
+    setState(() {});
+    QuerySnapshot querySnapshotFiltterTables = await FirebaseFirestore.instance
+        .collection("floor $selectedFloor")
+        .where(ParametersFloor.sizeTable, isEqualTo: selectedSize)
+        .where(ParametersFloor.availablity, isEqualTo: true)
+        .get();
+
+
+   
+
+    tablesAll.clear();
+
     print(
-        "===================================update is done");
+        "===================================number Tables=${querySnapshotFiltterTables.docs.length}");
+
+    for (int i = 0; i < querySnapshotFiltterTables.docs.length; i++) {
+      print("======================================in big loop $i");
+      QuerySnapshot<Map> querySnapshotTime = await FirebaseFirestore.instance
+          .collection("floor $selectedFloor")
+          .doc(querySnapshotFiltterTables.docs[i].id)
+          .collection(ParametersFloor.timeTable)
+          .where(ParametersFloor.dayTable, isEqualTo: selectedDayTable)
+          .get();
+
+      double selectedTimeFromINT = double.parse(selectedTimeFrom.toString());
+      double selectedTimeToINT = double.parse(selectedTimeTo.toString());
+
+      if (querySnapshotTime.docs.length != 0) {
+        for (double j = selectedTimeFromINT;
+            j < selectedTimeToINT;
+            j = j + 0.5) {
+          print("=======================================in small loop $j");
+
+          if (j >= 10) {
+            if (querySnapshotTime.docs[0]
+                    .data()[j.toString().replaceRange(2, 3, ",")] ==
+                false) {
+              // tablesAll.remove(querySnapshotFiltterTables.docs[i]);
+              print("number of tables all after false=${tablesAll.length}");
+              break;
+            }
+          }
+
+          if (j < 10) {
+            if (querySnapshotTime.docs[0]
+                    .data()[j.toString().replaceRange(1, 2, ",")] ==
+                false) {
+              // tablesAll.remove(querySnapshotFiltterTables.docs[i]);
+              print("number of tables all after false=${tablesAll.length}");
+              break;
+            }
+          }
+
+          if (j == selectedTimeToINT - 0.5) {
+            tablesAll.add(querySnapshotFiltterTables.docs[i]);
+            print("number of tables all after add =${tablesAll.length}");
+          }
+
+          print(
+              "======================================${querySnapshotTime.docs[0].data()[j.toString()]}");
+        }
+      }
+
+    } //big loop for all tables match size and floor
+
+    loadingGetTables = false;
+    setState(() {});
+  }
+
+  editAvailablityTable() async {
+    QuerySnapshot querySnapshotWantedTableId = await FirebaseFirestore.instance
+        .collection('floor $selectedFloor')
+        .where(
+          ParametersFloor.idTable,
+          isEqualTo: selectedIdTable,
+        )
+        .get();
+    print(
+        "===================================number tables match id=${querySnapshotWantedTableId.docs.length}");
+
+    CollectionReference collectionTimeTable = FirebaseFirestore.instance
+        .collection('floor $selectedFloor')
+        .doc(querySnapshotWantedTableId.docs[0].id)
+        .collection(ParametersFloor.timeTable);
+    print("===================================collectionFloor done");
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('floor $selectedFloor')
+        .doc(querySnapshotWantedTableId.docs[0].id)
+        .collection(ParametersFloor.timeTable)
+        .where(ParametersFloor.dayTable, isEqualTo: selectedDayTable)
+        .get();
+
+    double selectedTimeFromINT = double.parse(selectedTimeFrom.toString());
+    double selectedTimeToINT = double.parse(selectedTimeTo.toString());
+
+    for (double i = selectedTimeFromINT; i < selectedTimeToINT; i = i + 0.5) {
+      print("==============================i===$i");
+      await collectionTimeTable.doc(querySnapshot.docs[0].id).update({
+        if (i >= 10) i.toString().replaceRange(2, 3, ","): false,
+        if (i < 10) i.toString().replaceRange(1, 2, ","): false,
+      });
+    }
+
+    print("===================================update add reservation is done");
   }
 
   addReservationTable() async {
     QuerySnapshot querySnapshotCurrentUser = await FirebaseFirestore.instance
-        .collection('users')
-        .where("userEmail",
+        .collection(ParametersUsers.nameCollection)
+        .where(ParametersUsers.userEmail,
             isEqualTo: FirebaseAuth.instance.currentUser!.email.toString())
         .get();
     print(
         "===================================number users for reservation=${querySnapshotCurrentUser.docs.length}");
     uid = querySnapshotCurrentUser.docs[0].id;
     CollectionReference collectionReservationTable = FirebaseFirestore.instance
-        .collection("users")
+        .collection(ParametersUsers.nameCollection)
         .doc(uid)
-        .collection("reservationTable");
+        .collection(ParametersUsers.reservationTable);
     try {
-      print("++++++++++++++++++++++++++++++++++++++++++++++ttable added");
       await collectionReservationTable.add(
         {
-          "size": selectedSize,
-          "floorTable": selectedFloor,
-          "timeFrom": selectedTimeFrom,
-          "timeTo": selectedTimeTo,
-          "idTable": selectedIdTable,
+          ParametersReservationTable.sizeTableReserve: selectedSize,
+          ParametersReservationTable.floorTableReserve: selectedFloor,
+          ParametersReservationTable.timeFrom: selectedTimeFrom,
+          ParametersReservationTable.timeTo: selectedTimeTo,
+          ParametersReservationTable.idTableReserve: selectedIdTable,
+          ParametersReservationTable.dayTableReservation: selectedDayTable,
+          ParametersReservationTable.dateDay: dateDay,
+          ParametersReservationTable.datemonth: dateMonth,
+          ParametersReservationTable.dateyear: dateyear,
         },
       );
+
+      print("++++++++++++++++++++++++++++++++++++++++++++++ttable added");
     } catch (e) {
       print(e);
     }
   }
 
-  @override
-  void dispose() {
-    tablesAll.clear();
-    super.dispose();
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +260,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
         ),
       ),
       drawer: Drawer(
-        // width: 275,
         child: ContainerOfDrawer(
           userId: widget.userId,
           userName: widget.userName,
@@ -134,8 +272,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
           : Padding(
               padding: const EdgeInsets.only(top: 16),
               child: ListView(
-                // shrinkWrap: true,
-                // physics: const NeverScrollableScrollPhysics(),
                 children: [
                   Center(
                     child: DropdownMenu(
@@ -156,11 +292,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         },
                         dropdownMenuEntries: const [
                           DropdownMenuEntry(
-                              value: Text("0"), label: "Ground Floor"),
+                              value: Text("0"), label: "Floor 0"),
                           DropdownMenuEntry(
-                              value: Text("1"), label: "1st Floor"),
+                              value: Text("1"), label: "Floor 1"),
                           DropdownMenuEntry(
-                              value: Text("2"), label: "2nd Floor"),
+                              value: Text("2"), label: "Floor 2"),
                         ]),
                   ),
                   const SizedBox(
@@ -174,8 +310,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                       ),
                       width: MediaQuery.sizeOf(context).width * 0.99,
                       enableSearch: true,
-                      hintText: "Size table",
-                      // enableFilter: true,
+                      hintText: "Table Size",
                       onSelected: (value) {
                         setState(() {
                           selectedSize = value!.data;
@@ -185,9 +320,49 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         DropdownMenuEntry(
                             value: Text("S"), label: "Small (Computer)"),
                         DropdownMenuEntry(
-                            value: Text("M"), label: "Medium (3-4 persons)"),
+                            value: Text("M"), label: "Medium (3-4 students)"),
                         DropdownMenuEntry(
-                            value: Text("L"), label: "Large (5-6 persons)"),
+                            value: Text("L"), label: "Large (5-6 students)"),
+                      ]),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  DropdownMenu(
+                      inputDecorationTheme: const InputDecorationTheme(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 2, color: Colors.black),
+                        ),
+                      ),
+                      width: MediaQuery.sizeOf(context).width * 0.99,
+                      enableSearch: true,
+                      hintText: "Day",
+
+                      onSelected: (value) {
+                        setState(() {
+                          selectedDayTable = value!.data;
+                        });
+                      },
+                      dropdownMenuEntries: [
+                        DropdownMenuEntry(
+                            value: Text("2"),
+                            label: "Sunday",
+                            enabled: today > 2 ? false : true),
+                        DropdownMenuEntry(
+                            value: Text("3"),
+                            label: "Monday",
+                            enabled: today > 3 ? false : true),
+                        DropdownMenuEntry(
+                            value: Text("4"),
+                            label: "Tuesday",
+                            enabled: today > 4 ? false : true),
+                        DropdownMenuEntry(
+                            value: Text("5"),
+                            label: "Wednesday",
+                            enabled: today > 5 ? false : true),
+                        DropdownMenuEntry(
+                            value: Text("6"),
+                            label: "Thursday",
+                            enabled: today > 6 ? false : true),
                       ]),
                   const SizedBox(
                     height: 8,
@@ -203,7 +378,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   BorderSide(width: 2, color: Colors.black),
                             ),
                           ),
-                          // width: MediaQuery.sizeOf(context).width * 0.99,
                           hintText: "From",
                           onSelected: (value) {
                             setState(() {
@@ -214,33 +388,41 @@ class _ReservationScreenState extends State<ReservationScreen> {
                             DropdownMenuEntry(
                                 value: Text("8.5"), label: "8:30 AM"),
                             DropdownMenuEntry(
-                                value: Text("9"), label: "9:00 AM"),
+                                value: Text("9.0"), label: "9:00 AM"),
                             DropdownMenuEntry(
                                 value: Text("9.5"), label: "9:30 AM"),
                             DropdownMenuEntry(
-                                value: Text("10"), label: "10:00 AM"),
+                                value: Text("10.0"), label: "10:00 AM"),
                             DropdownMenuEntry(
                                 value: Text("10.5"), label: "10:30 AM"),
                             DropdownMenuEntry(
-                                value: Text("11"), label: "11:00 AM"),
+                                value: Text("11.0"), label: "11:00 AM"),
                             DropdownMenuEntry(
                                 value: Text("11.5"), label: "11:30 AM"),
                             DropdownMenuEntry(
-                                value: Text("12"), label: "12:00 PM"),
+                                value: Text("12.0"), label: "12:00 PM"),
                             DropdownMenuEntry(
                                 value: Text("12.5"), label: "12:30 PM"),
                             DropdownMenuEntry(
-                                value: Text("13"), label: "1:00 PM"),
+                                value: Text("13.0"), label: "1:00 PM"),
                             DropdownMenuEntry(
                                 value: Text("13.5"), label: "1:30 PM"),
                             DropdownMenuEntry(
-                                value: Text("14"), label: "2:00 PM"),
+                                value: Text("14.0"), label: "2:00 PM"),
                             DropdownMenuEntry(
                                 value: Text("14.5"), label: "2:30 PM"),
                             DropdownMenuEntry(
-                                value: Text("15"), label: "3:00 PM"),
+                                value: Text("15.0"), label: "3:00 PM"),
                             DropdownMenuEntry(
                                 value: Text("15.5"), label: "3:30 PM"),
+                            /////////
+                            // DropdownMenuEntry(
+                            //     value: Text("0.5"), label: "12:30 AM"),
+                            // DropdownMenuEntry(
+                            //     value: Text("1.0"), label: "1:00 AM"),
+                            // DropdownMenuEntry(
+                            //     value: Text("16.0"), label: "4:00 PM"),
+                            /////////
                           ]),
                       SizedBox(
                         width: MediaQuery.sizeOf(context).width * 0.01,
@@ -253,7 +435,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 BorderSide(width: 2, color: Colors.black),
                           ),
                         ),
-                        // width: MediaQuery.sizeOf(context).width * 0.99,
                         hintText: "To",
                         onSelected: (value) {
                           setState(() {
@@ -262,35 +443,45 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         },
                         enabled: selectedTimeFrom == null ? false : true,
                         dropdownMenuEntries: const [
-                          DropdownMenuEntry(value: Text("9"), label: "9:00 AM"),
+                          DropdownMenuEntry(
+                              value: Text("9.0"), label: "9:00 AM"),
                           DropdownMenuEntry(
                               value: Text("9.5"), label: "9:30 AM"),
                           DropdownMenuEntry(
-                              value: Text("10"), label: "10:00 AM"),
+                              value: Text("10.0"), label: "10:00 AM"),
                           DropdownMenuEntry(
                               value: Text("10.5"), label: "10:30 AM"),
                           DropdownMenuEntry(
-                              value: Text("11"), label: "11:00 AM"),
+                              value: Text("11.0"), label: "11:00 AM"),
                           DropdownMenuEntry(
                               value: Text("11.5"), label: "11:30 AM"),
                           DropdownMenuEntry(
-                              value: Text("12"), label: "12:00 PM"),
+                              value: Text("12.0"), label: "12:00 PM"),
                           DropdownMenuEntry(
                               value: Text("12.5"), label: "12:30 PM"),
                           DropdownMenuEntry(
-                              value: Text("13"), label: "1:00 PM"),
+                              value: Text("13.0"), label: "1:00 PM"),
                           DropdownMenuEntry(
                               value: Text("13.5"), label: "1:30 PM"),
                           DropdownMenuEntry(
-                              value: Text("14"), label: "2:00 PM"),
+                              value: Text("14.0"), label: "2:00 PM"),
                           DropdownMenuEntry(
                               value: Text("14.5"), label: "2:30 PM"),
                           DropdownMenuEntry(
-                              value: Text("15"), label: "3:00 PM"),
+                              value: Text("15.0"), label: "3:00 PM"),
                           DropdownMenuEntry(
                               value: Text("15.5"), label: "3:30 PM"),
                           DropdownMenuEntry(
-                              value: Text("16"), label: "4:00 PM"),
+                              value: Text("16.0"), label: "4:00 PM"),
+                          /////////
+                          ///
+                          // DropdownMenuEntry(
+                          //     value: Text("16.5"), label: "4:30 PM"),
+                          // DropdownMenuEntry(
+                          //     value: Text("1.0"), label: "1:00 AM"),
+                          // DropdownMenuEntry(
+                          //     value: Text("1.5"), label: "1:30 AM"),
+                          /////////
                         ],
                       ),
                     ],
@@ -298,84 +489,95 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   const SizedBox(
                     height: 16,
                   ),
-                  InkWell(
-                    onTap: () async {
-                      if (selectedTimeFrom != null && selectedTimeTo != null) {
-                        if (double.parse(selectedTimeTo!) <=
-                            double.parse(selectedTimeFrom!)) {
-                          timeValid = false;
-                          setState(() {});
-                          AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.error,
-                            animType: AnimType.scale,
-                            title: "Time Invalid",
-                            desc: 'time To is erlier than time from!',
-                            // btnOkOnPress: () {},
-                            // btnOkColor: const Color(0xff9A8877),
-                            btnCancel: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 36,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    gradient: const LinearGradient(colors: [
-                                      Color(0xff9A8877),
-                                      Color(0xffC3CFE2),
-                                    ])),
-                                child: const Text(
-                                  "Ok",
-                                  style: TextStyle(fontSize: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                     
+
+                          if (selectedTimeFrom != null &&
+                              selectedTimeTo != null &&
+                              selectedDayTable != null) {
+                            if (double.parse(selectedTimeTo!) <=
+                                double.parse(selectedTimeFrom!)) {
+                              timeValid = false;
+                              setState(() {});
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.scale,
+                                title: "Invalid Time",
+                                desc: 'Please make sure you choose the time correctly!',
+                                
+                                btnCancel: InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: ContainerOfDialog(
+                                    widthContainer: 100,
+                                    text: "Ok",
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ).show();
-                        } else {
-                          timeValid = true;
-                          setState(() {});
-                        }
-                      }
-                      loadingGetTables = true;
-                      setState(() {});
-                      QuerySnapshot querySnapshotFiltterTables =
-                          await FirebaseFirestore.instance
-                              .collection('floor $selectedFloor')
-                              .where(
-                                "size",
-                                isEqualTo: selectedSize,
-                              )
-                              .where("availablity", isEqualTo: true)
-                              .get();
-                      print(
-                          "===================================number Tables=${querySnapshotFiltterTables.docs.length}");
-                      tablesAll.clear();
-                      tablesAll.addAll(querySnapshotFiltterTables.docs);
-                      loadingGetTables = false;
-                      setState(() {});
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 40,
-                      margin: const EdgeInsets.only(right: 120, left: 120),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        gradient: const LinearGradient(colors: [
-                          Color(0xff9A8877),
-                          Color(0xffC3CFE2),
-                        ]),
+                              ).show();
+                            } else if (double.parse(selectedTimeTo!) -
+                                    double.parse(selectedTimeFrom!) >
+                                3) {
+                              setState(() {
+                                maxTime = false;
+                              });
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.scale,
+                                title: "Invalid time period ",
+                                desc: "You can't make a reservation for mor than 3 hours",
+                                
+                                btnCancel: InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: ContainerOfDialog(
+                                    widthContainer: 100,
+                                    text: "Ok",
+                                  ),
+                                ),
+                              ).show();
+                            } else {
+                              filterMapField();
+                              maxTime = true;
+                              timeValid = true;
+                              setState(() {});
+                            }
+                          }
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 40,
+                          width: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            gradient: const LinearGradient(colors: [
+                              Color(0xff9A8877),
+                              Color(0xffC3CFE2),
+                            ]),
+                          ),
+                          child: const Text(
+                            'Show',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.black87),
+                          ),
+                        ),
                       ),
-                      child: const Text(
-                        'Show',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.black87),
+                      SizedBox(
+                        width: 50,
                       ),
-                    ),
+                    ],
                   ),
                   const SizedBox(
                     height: 16,
@@ -391,7 +593,18 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     Container(
                         padding: const EdgeInsets.only(top: 24),
                         child: const Text(
-                          "Error Time Invalid",
+                          "Invalid time",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22),
+                          textAlign: TextAlign.center,
+                        ))
+                  else if (!maxTime)
+                    Container(
+                        padding: const EdgeInsets.only(top: 24),
+                        child: const Text(
+                          "No Available Tables Found",
                           style: TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.bold,
@@ -403,7 +616,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         ? Container(
                             padding: const EdgeInsets.only(top: 24),
                             child: const Text(
-                              "Not Found Tables available",
+                              "No Available Tables Found",
                               style: TextStyle(
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold,
@@ -425,13 +638,98 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                     desc: '',
                                     btnOk: InkWell(
                                       onTap: () async {
-                                        selectedIdTable =
-                                            tablesAll[i]["idTable"];
+                                        selectedIdTable = tablesAll[i]
+                                            [ParametersFloor.idTable];
 
                                         loadingReserveTable = true;
+                                        int today =
+                                            ((DateTime.now().weekday + 2) % 7);
+
+                                        var date;
+
+                                        if (convertToInt(selectedDayTable!) >=
+                                            today) {
+                                          date = DateTime.now().add(Duration(
+                                              days: convertToInt(
+                                                      selectedDayTable!) -
+                                                  today));
+                                        } else {
+                                          date = DateTime.now().add(Duration(
+                                              days: convertToInt(
+                                                      selectedDayTable!) +
+                                                  7 -
+                                                  today));
+                                        }
+
+                                        dateDay = date.day;
+                                        dateMonth = date.month;
+                                        dateyear = date.year;
+
+                                     
+
+                                        SetPref.setprefDate(
+                                            dateDay!, dateMonth!, dateyear!);
+
+                                        SetPref.setprefInfoReserve(
+                                            selectedIdTable!,
+                                            selectedSize!,
+                                            selectedFloor!,
+                                            selectedTimeFrom!,
+                                            selectedTimeTo!,
+                                            selectedDayTable!);
+                                        if (double.parse(selectedTimeFrom!) <
+                                            10) {
+                                          SetPref.setprefTimeFrom(
+                                              int.parse(selectedTimeFrom!
+                                                  .substring(0, 1)),
+                                              minuteFormat(selectedTimeFrom!
+                                                  .substring(2, 3)));
+                                        } else {
+                                          SetPref.setprefTimeFrom(
+                                              int.parse(selectedTimeFrom!
+                                                  .substring(0, 2)),
+                                              minuteFormat(selectedTimeFrom!
+                                                  .substring(3, 4)));
+                                        }
+
+                                        if (double.parse(selectedTimeTo!) <
+                                            10) {
+                                          SetPref.setprefTimeTo(
+                                              int.parse(selectedTimeTo!
+                                                  .substring(0, 1)),
+                                              minuteFormat(selectedTimeTo!
+                                                  .substring(2, 3)));
+                                        } else {
+                                          SetPref.setprefTimeTo(
+                                              int.parse(selectedTimeTo!
+                                                  .substring(0, 2)),
+                                              minuteFormat(selectedTimeTo!
+                                                  .substring(3, 4)));
+                                        }
                                         setState(() {});
                                         addReservationTable();
                                         editAvailablityTable();
+
+                                        ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Container(
+                                    width: double.infinity,
+                                    height: 20,
+                                      // decoration: BoxDecoration(
+                                      //   gradient: const LinearGradient(colors: [
+                                      //     Color(0xff9A8877),
+                                      //     Color(0xffC3CFE2),
+                                      //   ]),
+                                      // ),
+                                      child: Text(
+                                        "Reservation has been added",
+                                        style: TextStyle(
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  backgroundColor: AddColor.backgrounSnackBar,
+                                ));
+
                                         Navigator.pushNamedAndRemoveUntil(
                                           context,
                                           Screens.homePageScreen,
@@ -441,14 +739,17 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                           loadingReserveTable = false;
                                         });
                                       },
-                                      child: const ContainerOfDialog(text: "Ok",),
+                                      child: const ContainerOfDialog(
+                                        text: "Yes",
+                                      ),
                                     ),
                                     btnCancel: InkWell(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const ContainerOfDialog(text: "Cancel",)
-                                    ),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const ContainerOfDialog(
+                                          text: "Cancel",
+                                        )),
                                   ).show();
                                 },
                                 child: Card(
@@ -457,12 +758,12 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   child: ListTile(
                                     // enabled: false,
                                     leading: Text(
-                                        "Id Table:${tablesAll[i]["idTable"]}"),
+                                        "Table Id:${tablesAll[i][ParametersFloor.idTable]}"),
                                     title: Text("Floor #$selectedFloor"),
-                                    subtitle:
-                                        Text("Size->${tablesAll[i]["size"]}"),
-                                    trailing:
-                                        const Icon(Icons.access_alarms_sharp),
+                                    subtitle: Text(
+                                        "Size->${tablesAll[i][ParametersFloor.sizeTable]}"),
+                                    // trailing: Text(
+                                    //     "Day:${dayFormat(selectedDayTable!)}"),
                                   ),
                                 ),
                               );
@@ -474,5 +775,3 @@ class _ReservationScreenState extends State<ReservationScreen> {
     );
   }
 }
-
-

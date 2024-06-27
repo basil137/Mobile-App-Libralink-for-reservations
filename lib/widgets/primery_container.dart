@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class PrimeryContainer extends StatelessWidget {
   const PrimeryContainer({
-    super.key, required this.text,
+    super.key, required this.text, required this.textColor,
   });
   final String text;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin:const EdgeInsets.only(right: 32, left: 32),
       alignment: Alignment.center,
       height: 56,
       width: 296,
@@ -23,10 +23,10 @@ class PrimeryContainer extends StatelessWidget {
       ),
       child:  Text(
         text,
-        style: const TextStyle(
+        style:  TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
-            color: Colors.black87),
+            color:textColor),
       ),
     );
   }

@@ -10,6 +10,8 @@ class AddColor {
   static Color primarycolor = Colors.grey[200]!;
   static Color logoColor = Colors.blueGrey[900]!;
   static Color backgrounAppBar =   const Color.fromARGB(255, 182, 161, 141);
+  static Color backgrounSnackBar = const Color.fromARGB(255, 182, 161, 141);
+
   static const Color shaddowAppBar =   Color(0xff9A8899);
   static const Color gridColor1 =   Color(0xff9A8877);
 

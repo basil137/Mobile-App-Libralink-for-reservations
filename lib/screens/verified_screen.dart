@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:project2/util/img_fonts_clr.dart';
-import 'package:project2/util/screens.dart';
+import 'package:Libralink/util/img_fonts_clr.dart';
+import 'package:Libralink/util/screens.dart';
 
 class VerifiedScreen extends StatefulWidget {
-  const VerifiedScreen({super.key});
+   VerifiedScreen({super.key, required this.myId, required this.myEmail, required this.myName, required this.mypass});
+  final String myId;
+  final String myEmail;
+  final String myName;
+  final String mypass;
+
+
+
 
   @override
   State<VerifiedScreen> createState() => _VerifiedScreenState();
@@ -34,9 +41,29 @@ class _VerifiedScreenState extends State<VerifiedScreen> {
         children: [
           const Center(
             child: Text(
-              "Please Cheack your email then login",
-              style: TextStyle(fontSize: 20),
+              "Please verify your email",
+              style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+           Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  "You're almost there! We sent an email to ",
+                  style: TextStyle(fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "${widget.myEmail}",
+                  style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
           const SizedBox(
@@ -58,7 +85,7 @@ class _VerifiedScreenState extends State<VerifiedScreen> {
                     Color(0xffC3CFE2),
                   ])),
               child: const Text(
-                "Go To Login",
+                "Go to Login",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),

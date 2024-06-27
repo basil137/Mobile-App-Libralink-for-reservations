@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:project2/screens/reg_screen.dart';
-import 'package:project2/util/img_fonts_clr.dart';
+import 'package:Libralink/screens/reg_screen.dart';
+import 'package:Libralink/util/img_fonts_clr.dart';
 import 'login_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -10,7 +9,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: Container( 
         height: double.infinity,
         width: double.infinity,
         decoration: const BoxDecoration(
@@ -86,14 +85,7 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          // const Text(
-          //   'Login with Social Media',
-          //   style: TextStyle(fontSize: 17, color: Colors.white),
-          // ), //
-          // const SizedBox(
-          //   height: 16,
-          // ),
-          // const Image(image: AssetImage('assets/social.png'))
+          
         ]),
       ),
     );

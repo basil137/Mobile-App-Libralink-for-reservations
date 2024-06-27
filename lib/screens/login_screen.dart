@@ -1,16 +1,14 @@
-// ignore_for_file: unused_local_variable
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project2/exptions.dart';
-import 'package:project2/screens/reg_screen.dart';
-import 'package:project2/util/screens.dart';
-import 'package:project2/widgets/alignoptionstosign.dart';
-import 'package:project2/widgets/stackbackgroundcontainer.dart';
-import 'package:project2/widgets/textfeilds.dart';
+import 'package:Libralink/exptions.dart';
+import 'package:Libralink/screens/reg_screen.dart';
+import 'package:Libralink/util/screens.dart';
+import 'package:Libralink/widgets/alignoptionstosign.dart';
+import 'package:Libralink/widgets/stackbackgroundcontainer.dart';
+import 'package:Libralink/widgets/textfeilds.dart';
 
-// ignore: camel_case_types
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -161,17 +159,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                             (route) => false);
                                       } else {
                                         setState(() {
-                                        loading = false;
-                                      });
-                                        FirebaseAuth.instance.currentUser!
-                                            .sendEmailVerification;
+                                          loading = false;
+                                        });
+                                        // FirebaseAuth.instance.currentUser!
+                                        //     .sendEmailVerification;
+                                        credential.user!.sendEmailVerification;
                                         AwesomeDialog(
                                           context: context,
-                                          dialogType: DialogType.info,
+                                          dialogType: DialogType.warning,
                                           animType: AnimType.scale,
-                                          title: 'No Email Verifacation',
+                                          title: 'Verify Your Email!',
                                           desc:
-                                              'your email has not be verfied, check your email',
+                                              'your email has not been verified, check your email and login again',
                                           btnOkOnPress: () {},
                                           btnOkColor: const Color(0xff9A8877),
                                           btnOk: InkWell(

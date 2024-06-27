@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project2/exptions.dart';
-import 'package:project2/util/img_fonts_clr.dart';
-import 'package:project2/widgets/card_user_info.dart';
+import 'package:Libralink/exptions.dart';
+import 'package:Libralink/util/img_fonts_clr.dart';
+import 'package:Libralink/widgets/card_user_info.dart';
 
 class UserInfoScreen extends StatefulWidget {
   const UserInfoScreen({super.key, this.userName, this.userId});
@@ -45,6 +45,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         child: ListView(
           children: [
             CardUserInfo(
+              colorEdit: Colors.blue[900]!,
               keyBoardType: TextInputType.name,
               leadText: "Name",
               titleText: widget.userName.toString(),
@@ -58,7 +59,8 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
               },
             ),
             CardUserInfo(
-              leadText: "Id Number",
+              colorEdit: Colors.blue[900]!,
+              leadText: "ID Num",
               titleText: widget.userId.toString(),
               keyBoardType: TextInputType.number,
               validator: (val) {
@@ -81,6 +83,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
               },
             ),
             CardUserInfo(
+              colorEdit: Colors.blueGrey[300]!,
               keyBoardType: TextInputType.emailAddress,
               leadText: "Email",
               titleText: FirebaseAuth.instance.currentUser!.email.toString(),

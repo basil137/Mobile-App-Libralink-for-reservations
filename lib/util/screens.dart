@@ -6,6 +6,9 @@ class Screens {
   static const String verifiedScreen = "VerifiedScreen";
   static const String userInfoScreen = "UserInfoScreen";
   static const String reservationScreen = "ReservationScreen";
+  static const String reservationDetailsScreen = "ReservationDetailsScreen";
+
+  
 
 
 }

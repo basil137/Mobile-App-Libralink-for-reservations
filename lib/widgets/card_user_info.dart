@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project2/screens/edit_info_screen.dart';
-import 'package:project2/util/img_fonts_clr.dart';
+import 'package:Libralink/screens/edit_info_screen.dart';
+import 'package:Libralink/util/img_fonts_clr.dart';
 
 class CardUserInfo extends StatelessWidget {
   const CardUserInfo({
@@ -9,13 +9,14 @@ class CardUserInfo extends StatelessWidget {
     required this.titleText,
     this.ontap,
     required this.keyBoardType,
-    this.validator,
+    this.validator, required this.colorEdit,
   });
 
   final String leadText;
   final String titleText;
   final void Function()? ontap;
   final String? Function(String?)? validator;
+  final Color colorEdit;
 
   final TextInputType keyBoardType;
 
@@ -23,14 +24,14 @@ class CardUserInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: AddColor.primarycolor,
-      // margin: const EdgeInsets.symmetric(vertical: ),
       child: ListTile(
         title: Text(titleText),
         leading: Text("$leadText:"),
         leadingAndTrailingTextStyle: const TextStyle(
-            fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 18),
+            fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 12),
         trailing: InkWell(
           onTap: () {
+            if(leadText!="Email")
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -47,7 +48,7 @@ class CardUserInfo extends StatelessWidget {
             "edit",
             style: TextStyle(
                 fontWeight: FontWeight.w400,
-                color: Colors.blue[900],
+                color: colorEdit,
                 fontSize: 16),
           ),
         ),

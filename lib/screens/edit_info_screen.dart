@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project2/util/screens.dart';
+import 'package:Libralink/util/parameters.dart';
+import 'package:Libralink/util/screens.dart';
 
 class EditInfoScreen extends StatefulWidget {
   const EditInfoScreen({
@@ -20,14 +21,13 @@ class EditInfoScreen extends StatefulWidget {
   final String? Function(String?)? validator;
   final void Function()? ontap;
 
-  // final TextEditingController customController;
 
   @override
   State<EditInfoScreen> createState() => _EditInfoScreenState();
 }
 
 class _EditInfoScreenState extends State<EditInfoScreen> {
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference users = FirebaseFirestore.instance.collection(ParametersUsers.nameCollection);
 
   GlobalKey<FormState> keyform = GlobalKey();
   TextEditingController customController = TextEditingController();
@@ -86,8 +86,8 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
                     onTap: () async {
                       QuerySnapshot querySnapshot = await FirebaseFirestore
                           .instance
-                          .collection('users')
-                          .where("userEmail",
+                          .collection(ParametersUsers.nameCollection)
+                          .where(ParametersUsers.userEmail,
                               isEqualTo: FirebaseAuth
                                   .instance.currentUser!.email
                                   .toString())
@@ -99,20 +99,20 @@ class _EditInfoScreenState extends State<EditInfoScreen> {
                           setState(() {});
                           await users
                               .doc(querySnapshot.docs[0].id)
-                              .update({"userName": customController.text}); 
+                              .update({ParametersUsers.userName: customController.text}); 
 
                           Navigator.pushNamedAndRemoveUntil(context,
                               Screens.homePageScreen, (route) => false);
                           loading = false;
                           setState(() {});
                         }
-                      } else if (widget.lableText == "Id Number") {
+                      } else if (widget.lableText == "ID Num") {
                         if (keyform.currentState!.validate()) {
                           loading = true;
                           setState(() {});
                           await users
                               .doc(querySnapshot.docs[0].id)
-                              .update({"userId": customController.text});
+                              .update({ParametersUsers.userId: customController.text});
 
                           Navigator.pushNamedAndRemoveUntil(context,
                               Screens.homePageScreen, (route) => false);

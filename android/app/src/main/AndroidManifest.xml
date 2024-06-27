@@ -1,9 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
-        android:label="project2"
+        android:label="Libralink"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/launcher_icon_and">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

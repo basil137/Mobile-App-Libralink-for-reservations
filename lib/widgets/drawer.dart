@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project2/util/img_fonts_clr.dart';
-import 'package:project2/util/screens.dart';
+import 'package:Libralink/util/img_fonts_clr.dart';
+import 'package:Libralink/util/screens.dart';
 
 class ContainerOfDrawer extends StatelessWidget {
   const ContainerOfDrawer({
@@ -26,17 +26,7 @@ class ContainerOfDrawer extends StatelessWidget {
         children: [
           Row(
             children: [
-              // SizedBox(
-              //   width: 60,
-              //   height: 60,
-              //   child: ClipRRect(
-              //     borderRadius: BorderRadius.circular(1000),
-              //     child: Image.asset(
-              //       "images/wwwwwwww.jpg",
-              //       fit: BoxFit.cover,
-              //     ),
-              //   ),
-              // ),
+              
               Expanded(
                 child: ListTile(
                   textColor: Colors.black,

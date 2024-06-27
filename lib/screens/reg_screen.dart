@@ -1,14 +1,14 @@
-// ignore_for_file: unused_local_variable
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project2/exptions.dart';
-import 'package:project2/screens/login_screen.dart';
-import 'package:project2/screens/verified_screen.dart';
-import 'package:project2/widgets/alignoptionstosign.dart';
-import 'package:project2/widgets/stackbackgroundcontainer.dart';
-import 'package:project2/widgets/textfeilds.dart';
+import 'package:Libralink/exptions.dart';
+import 'package:Libralink/screens/login_screen.dart';
+import 'package:Libralink/screens/verified_screen.dart';
+import 'package:Libralink/util/parameters.dart';
+import 'package:Libralink/widgets/alignoptionstosign.dart';
+import 'package:Libralink/widgets/stackbackgroundcontainer.dart';
+import 'package:Libralink/widgets/textfeilds.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -38,13 +38,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController emailControllerSign = TextEditingController();
   TextEditingController passConfirmControllerSign = TextEditingController();
 
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference users = FirebaseFirestore.instance.collection(ParametersUsers.nameCollection);
   Future<void> addUser() {
     return users
         .add({
-          'userName': nameControllerSign.text,
-          'userEmail': emailControllerSign.text,
-          'userId': idControllerSign.text,
+          ParametersUsers.userName: nameControllerSign.text,
+          ParametersUsers.userEmail: emailControllerSign.text,
+          ParametersUsers.userId: idControllerSign.text,
+          ParametersUsers.checkIn:false,
         })
         .then((value) => print("==========================User Added"))
         .catchError((error) =>
@@ -57,7 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         body: loading
             ? const Center(child: CircularProgressIndicator())
             : ListView(
-                physics: const NeverScrollableScrollPhysics(),
+                // physics: const NeverScrollableScrollPhysics(),
                 children: [
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height,
@@ -68,7 +69,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           const StackBackgrounContainer(
                               subjectText: "Create Your\nAccount"),
                           Container(
-                            // margin: EdgeInsets.only(top: 200),
                             padding: const EdgeInsets.symmetric(horizontal: 16),
 
                             decoration: const BoxDecoration(
@@ -271,8 +271,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             password: passControllerSign.text,
                                           );
 
-                                          FirebaseAuth.instance.currentUser!
-                                              .sendEmailVerification();
+                                          
+
+                                          credential.user!.sendEmailVerification;
 
                                           addUser();
                                           setState(() {
@@ -282,7 +283,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const VerifiedScreen(),
+                                                     VerifiedScreen(myEmail:emailControllerSign.text,mypass:passControllerSign.text ,myId:idControllerSign.text,myName: nameControllerSign.text  ,),
                                               ),
                                               (route) => false);
                                         } on FirebaseAuthException catch (e) {
@@ -335,7 +336,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       ),
                                     ),
                                   ),
-                                  // const Spacer(),
                                   const AlignOptionsToSign(
                                     quastion: "already have an account?",
                                     optionToSign: "Log in",
