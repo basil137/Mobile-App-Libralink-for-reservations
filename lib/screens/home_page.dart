@@ -62,7 +62,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     else if (day == "6") return 6;
   }
 
-  myRequestPermission() async {
+  myRequestPermission() async { //sultan//////////////////////
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     NotificationSettings settings = await messaging.requestPermission(
@@ -105,7 +105,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
       if (reset == false) {
 
-    print("++++++++++++++++++++++++++++++++++in weekend &&  reset == false");
+      print("++++++++++++++++++++++++++++++++++in weekend &&  reset == false");
 
         await collectionReferenceReset
             .doc(querySnapshotReset.docs[0].id)
@@ -114,15 +114,15 @@ class _HomePageScreenState extends State<HomePageScreen> {
         //##################################  floor 0   ##########################
 
         QuerySnapshot querySnapshotAllTables0 =
-            await FirebaseFirestore.instance.collection('floor 0').get();
+            await FirebaseFirestore.instance.collection('floor 0').get();// number of tables in collection floor #
 
-        for (int i = 0; i < querySnapshotAllTables0.docs.length; i++) {
+        for (int i = 0; i < querySnapshotAllTables0.docs.length; i++) { 
           QuerySnapshot querySnapshotTimeTable0 = await FirebaseFirestore
               .instance
               .collection("floor 0")
               .doc(querySnapshotAllTables0.docs[i].id)
               .collection(ParametersFloor.timeTable)
-              .get();
+              .get();//5 days in every table time
 
           for (int j = 0; j < querySnapshotTimeTable0.docs.length; j++) {
             FirebaseFirestore.instance
@@ -264,7 +264,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         .collection(ParametersUsers.nameCollection)
         .doc(uid)
         .collection(ParametersUsers.reservationTable)
-        .get();
+        .get();// get reservation of user if there any
 
     if (querySnapshotUserBook.docs.length != 0) {
       setState(() {
@@ -312,10 +312,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
       if (double.parse(selectedTimeFrom!) < 10) {
         SetPref.setprefTimeFrom(int.parse(selectedTimeFrom!.substring(0, 1)),
-            minuteFormat(selectedTimeFrom!.substring(2, 3)));
+            minuteFormat(selectedTimeFrom!.substring(2, 3)));//ex. set "9.5" to hour=9 ,min=5
       } else {
         SetPref.setprefTimeFrom(int.parse(selectedTimeFrom!.substring(0, 2)),
-            minuteFormat(selectedTimeFrom!.substring(3, 4)));
+            minuteFormat(selectedTimeFrom!.substring(3, 4)));//ex. set "10.0" to hour=10 ,min=0
       }
 
       if (double.parse(selectedTimeTo!) < 10) {
@@ -379,7 +379,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     double selectedTimeFromINT = double.parse(selectedTimeFrom.toString());
     double selectedTimeToINT = double.parse(selectedTimeTo.toString());
 
-    for (double i = selectedTimeFromINT; i < selectedTimeToINT; i = i + 0.5) {
+    for (double i = selectedTimeFromINT; i < selectedTimeToINT; i = i + 0.5) {//time is multpile of 0.5
       print("==============================i===$i");
       await collectionTimeTable.doc(querySnapshot.docs[0].id).update({
         if (i >= 10) i.toString().replaceRange(2, 3, ","): true,
@@ -446,10 +446,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
         } else if (nowEqualdateDay &&
             (TimeOfDay.now().hour > hourFrom ||
                 (TimeOfDay.now().hour == hourFrom &&
-                    TimeOfDay.now().minute >= minuteFrom + 10))) {
+                    TimeOfDay.now().minute >= minuteFrom + 10))) {//If the current time exceeds the reservation time
           print("============================in now day =$today > selectday ");
 
-          if (cheackIn == false) {
+          if (cheackIn == false) {// if he didn't scaned the qr code
             print("============================in checkin==false");
             deleteReservation();
             allowedBooking = true;
@@ -457,7 +457,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           } else if (cheackIn == true &&
               (TimeOfDay.now().hour > hourTo ||
                   (TimeOfDay.now().hour == hourTo &&
-                      TimeOfDay.now().minute >= minuteTo))) {
+                      TimeOfDay.now().minute >= minuteTo))) {//if he does scaned the qr code and exceeds the time to(end of reservation) 
             print("============================in checkin==true &&....");
 
             deleteReservation();
@@ -478,7 +478,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     setState(() {});
   } //
 
-  void checkAllowed() async {
+  void checkAllowed() async {//allowed to reserve ... only one reserve allowed
     QuerySnapshot querySnapshotReservationTables = await FirebaseFirestore
         .instance
         .collection("users")
@@ -502,7 +502,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     chekComeORNot();
   }
 
-  void getdataAll() async {
+  void getdataOfUser() async {
     getReservationDetailsAndSetIntoPref();
     QuerySnapshot querySnapshotUserAccount = await FirebaseFirestore.instance
         .collection(ParametersUsers.nameCollection)
@@ -536,7 +536,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   void initState() {
     
-    getdataAll();
+    getdataOfUser();
     myRequestPermission();
     // Future.delayed(const Duration(seconds: 1));
     super.initState();

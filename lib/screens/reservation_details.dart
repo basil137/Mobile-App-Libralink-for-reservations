@@ -108,15 +108,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
       return "3:30 PM";
     } else if (time == "16.0") {
       return "4:00 PM";
-    } else if (time == "0.5") {
-      return "12:30 AM";
-    } else if (time == "1.0") {
-      return "1:00 AM";
-    } else if (time == "1.5") {
-      return "1:30 AM";
-    } else if (time == "16.5") {
-      return "4:30 PM";
-    }
+    } 
     return "null";
   }
 
@@ -226,7 +218,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
       if (nowEqualdateDay &&
           TimeOfDay.now().hour == hourFrom &&
           TimeOfDay.now().minute >= minuteFrom &&
-          TimeOfDay.now().minute < minuteFrom + 10) {
+          TimeOfDay.now().minute < minuteFrom + 10) {//time to scan is 10 mins
         print("============================in scan true");
 
         timeToScan = true;
@@ -235,15 +227,15 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
           (nowEqualdateDay &&
               (TimeOfDay.now().hour < hourFrom ||
                   (TimeOfDay.now().hour == hourFrom &&
-                      TimeOfDay.now().minute < minuteFrom)))) {
+                      TimeOfDay.now().minute < minuteFrom)))) {//stil he cant scan 
         print("============================in scan false");
 
         timeToScan = false;
         setState(() {});
-      } else {
+      } else {//if current time exceeds the time from +10 
         print("============================in else time>time+10");
 
-        if (cheackIn == false) {
+        if (cheackIn == false) {//if he didn't scan qr code 
           deleteReservation();
           print("============================in checkin==false & delete");
 
@@ -258,7 +250,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                 (nowEqualdateDay &&
                     (TimeOfDay.now().hour > hourTo ||
                         (TimeOfDay.now().hour == hourTo &&
-                            TimeOfDay.now().minute >= minuteTo))))) {
+                            TimeOfDay.now().minute >= minuteTo))))) { //if he scaned qr code then time To end(at end of reservation)
           print("============================in checkin==true &&....");
 
           deleteReservation();

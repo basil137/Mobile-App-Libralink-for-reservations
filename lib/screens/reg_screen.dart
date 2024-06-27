@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   topRight: Radius.circular(40)),
                               color: Colors.white,
                             ),
-                            height: MediaQuery.sizeOf(context).height - 200,
+                            height: MediaQuery.sizeOf(context).height*0.78,
                             width: double.infinity,
                             child: Form(
                               key: keyform,
@@ -114,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       }
                                       if (val.length != 6) {
                                         idValid = false;
-                                        return "requaired only6 digits";
+                                        return "requaired only 6 digits";
                                       } else {
                                         idValid = true;
                                         return null;
@@ -188,7 +188,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           icon: secreteyePass
                                               ? const Icon(Icons.visibility_off)
                                               : const Icon(
-                                                  Icons.visibility_rounded),
+                                                  Icons.visibility_rounded,color: Colors.black,),
                                         ),
                                         label: const Text(
                                           'Password',
@@ -239,7 +239,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           icon: secreteyeNewPass
                                               ? const Icon(Icons.visibility_off)
                                               : const Icon(
-                                                  Icons.visibility_rounded),
+                                                  Icons.visibility_rounded,color: Colors.black,),
                                         ),
                                         label: const Text(
                                           'Confirm Password',
@@ -255,7 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   InkWell(
                                     //Button..............................................///////////////////////////////////////////
                                     onTap: () async {
-                                      if (keyform.currentState!.validate()) {}
+                                      if (keyform.currentState!.validate()) {}//sultan/////////
 
                                       if (passmatch &&
                                           nameControllerSign.text != '' &&
@@ -273,7 +273,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                                           
 
-                                          credential.user!.sendEmailVerification;
+                                          credential.user!.sendEmailVerification();
 
                                           addUser();
                                           setState(() {

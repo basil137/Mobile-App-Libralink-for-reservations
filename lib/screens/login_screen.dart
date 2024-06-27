@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 topRight: Radius.circular(40)),
                             color: Colors.white,
                           ),
-                          height: MediaQuery.sizeOf(context).height - 200,
+                          height: MediaQuery.sizeOf(context).height *0.78,
                           width: double.infinity,
                           child: Form(
                             key: keyformLog,
@@ -163,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         });
                                         // FirebaseAuth.instance.currentUser!
                                         //     .sendEmailVerification;
-                                        credential.user!.sendEmailVerification;
+                                        credential.user!.sendEmailVerification();
                                         AwesomeDialog(
                                           context: context,
                                           dialogType: DialogType.warning,

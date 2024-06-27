@@ -96,7 +96,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
         .collection("floor $selectedFloor")
         .where(ParametersFloor.sizeTable, isEqualTo: selectedSize)
         .where(ParametersFloor.availablity, isEqualTo: true)
-        .get();
+        .get();// tables that matches with size and floor selected
 
 
    
@@ -113,7 +113,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           .doc(querySnapshotFiltterTables.docs[i].id)
           .collection(ParametersFloor.timeTable)
           .where(ParametersFloor.dayTable, isEqualTo: selectedDayTable)
-          .get();
+          .get();// tables that matches with time from-To is valid and day selected
 
       double selectedTimeFromINT = double.parse(selectedTimeFrom.toString());
       double selectedTimeToINT = double.parse(selectedTimeTo.toString());
@@ -127,8 +127,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           if (j >= 10) {
             if (querySnapshotTime.docs[0]
                     .data()[j.toString().replaceRange(2, 3, ",")] ==
-                false) {
-              // tablesAll.remove(querySnapshotFiltterTables.docs[i]);
+                false) {    //to save it in database at ex. 10.5 -> 10,5 becuase "." use to map
               print("number of tables all after false=${tablesAll.length}");
               break;
             }
@@ -137,8 +136,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           if (j < 10) {
             if (querySnapshotTime.docs[0]
                     .data()[j.toString().replaceRange(1, 2, ",")] ==
-                false) {
-              // tablesAll.remove(querySnapshotFiltterTables.docs[i]);
+                false) {//ex. 9.0 -> 9,0
               print("number of tables all after false=${tablesAll.length}");
               break;
             }
@@ -284,7 +282,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         width: MediaQuery.sizeOf(context).width * 0.99,
                         enableSearch: true,
                         hintText: "Floor number",
-                        // enableFilter: true,
                         onSelected: (value) {
                           setState(() {
                             selectedFloor = value!.data;
@@ -643,22 +640,22 @@ class _ReservationScreenState extends State<ReservationScreen> {
 
                                         loadingReserveTable = true;
                                         int today =
-                                            ((DateTime.now().weekday + 2) % 7);
+                                            ((DateTime.now().weekday + 2) % 7);//ex. TUS == 4
 
                                         var date;
 
                                         if (convertToInt(selectedDayTable!) >=
-                                            today) {
+                                            today) {//ex. selectedDayTable==wed==5
                                           date = DateTime.now().add(Duration(
                                               days: convertToInt(
                                                       selectedDayTable!) -
-                                                  today));
-                                        } else {
+                                                  today));//5-4== 1 then add 1 day to date of now 
+                                        } else {//ex. selectedDayTable==sun==2
                                           date = DateTime.now().add(Duration(
                                               days: convertToInt(
                                                       selectedDayTable!) +
                                                   7 -
-                                                  today));
+                                                  today));//2+7-4== 5 then add 5 days to date of now (meaning the next week) 
                                         }
 
                                         dateDay = date.day;
@@ -715,12 +712,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                   content: Container(
                                     width: double.infinity,
                                     height: 20,
-                                      // decoration: BoxDecoration(
-                                      //   gradient: const LinearGradient(colors: [
-                                      //     Color(0xff9A8877),
-                                      //     Color(0xffC3CFE2),
-                                      //   ]),
-                                      // ),
                                       child: Text(
                                         "Reservation has been added",
                                         style: TextStyle(
