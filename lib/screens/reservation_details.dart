@@ -543,7 +543,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                               animType: AnimType.scale,
                               title: "Reservation hasn't started",
                               desc:
-                                  "You can scan QR code between ${TimeFormating(selectedTimeFrom)} until ${TimeFormating(selectedTimeFrom).replaceRange(3, 4, '9')}, after that your reservation will be cancelled automatically ",
+                                  "The QR is available to scan for 10 mins from the time you reserved, after that your reservation will be cancelled automatically ",
                               btnOk: InkWell(
                                 onTap: () async {
                                   Navigator.pop(context);
