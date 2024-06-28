@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   topRight: Radius.circular(40)),
                               color: Colors.white,
                             ),
-                            height: MediaQuery.sizeOf(context).height*0.78,
+                            height: MediaQuery.sizeOf(context).height*0.8,
                             width: double.infinity,
                             child: Form(
                               key: keyform,
@@ -273,7 +273,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                                           
 
-                                          credential.user!.sendEmailVerification();
+                                          credential.user!.sendEmailVerification();//sultan
 
                                           addUser();
                                           setState(() {
