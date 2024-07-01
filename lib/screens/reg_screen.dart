@@ -213,7 +213,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       }
                                       if (val != passconfirm) {
                                         passmatch = false;
-                                        return "dose isn't match with password";
+                                        return "dosen't  match with password";
                                       } else {
                                         passmatch = true;
                                         return null;

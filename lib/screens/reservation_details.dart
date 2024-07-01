@@ -218,7 +218,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
       if (nowEqualdateDay &&
           TimeOfDay.now().hour == hourFrom &&
           TimeOfDay.now().minute >= minuteFrom &&
-          TimeOfDay.now().minute < minuteFrom + 10) {//time to scan is 10 mins
+          TimeOfDay.now().minute < minuteFrom + 15) {//time to scan is 10 mins
         print("============================in scan true");
 
         timeToScan = true;

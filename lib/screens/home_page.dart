@@ -446,7 +446,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         } else if (nowEqualdateDay &&
             (TimeOfDay.now().hour > hourFrom ||
                 (TimeOfDay.now().hour == hourFrom &&
-                    TimeOfDay.now().minute >= minuteFrom + 10))) {//If the current time exceeds the reservation time
+                    TimeOfDay.now().minute >= minuteFrom + 15))) {//If the current time exceeds the reservation time
           print("============================in now day =$today > selectday ");
 
           if (cheackIn == false) {// if he didn't scaned the qr code
