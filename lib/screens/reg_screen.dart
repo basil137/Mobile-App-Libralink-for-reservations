@@ -88,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     keyboardType: TextInputType.name,
                                     validator: (val) {
                                       if (val!.isEmpty) {
-                                        return "this field is requaired";
+                                        return "this field is required";
                                       } else {
                                         return null;
                                       }
@@ -106,7 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           RegExp(RegExption.noNumber);
                                       if (val!.isEmpty) {
                                         idValid = false;
-                                        return "this field is requaired";
+                                        return "this field is required";
                                       }
                                       if (regId.hasMatch(val)) {
                                         idValid = false;
@@ -114,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       }
                                       if (val.length != 6) {
                                         idValid = false;
-                                        return "requaired only 6 digits";
+                                        return "only 6 digits required";
                                       } else {
                                         idValid = true;
                                         return null;
@@ -131,14 +131,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           RegExp(RegExption.email);
 
                                       if (val!.isEmpty) {
-                                        return "this field is requaired";
+                                        return "this field is required";
                                       }
 
                                       if (!regEmail.hasMatch(val)) {
                                         return "'$val' is invalid email";
                                       }
                                       if (emailValid == false) {
-                                        return "The account already exists for that email.";
+                                        return "This email is already used for another account.";
                                       } else {
                                         return null;
                                       }
@@ -157,7 +157,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           RegExp(RegExption.passwordValedate);
 
                                       if (val!.isEmpty) {
-                                        return "this field is requaired";
+                                        return "this field is required";
                                       }
 
                                       if (!regPassword.hasMatch(val)) {
@@ -206,14 +206,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       RegExp regNewPassword =
                                           RegExp(RegExption.passwordValedate);
                                       if (val!.isEmpty) {
-                                        return "this field is requaired";
+                                        return "this field is required";
                                       }
                                       if (!regNewPassword.hasMatch(val)) {
                                         return "invalid Password";
                                       }
                                       if (val != passconfirm) {
                                         passmatch = false;
-                                        return "dosen't  match with password";
+                                        return "dosen't match with password";
                                       } else {
                                         passmatch = true;
                                         return null;
